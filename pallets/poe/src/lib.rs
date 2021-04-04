@@ -112,26 +112,11 @@ decl_module! {
 			let (owner, _) = Proofs::<T>::get(&proof);
 			ensure!(sender == owner, Error::<T>::NotProofOwner);
 			let current_block = <frame_system::Module<T>>::block_number();
-			// let receiver = ensure_signed(dest)?;
 			let receiver = T::Lookup::lookup(dest)?;
 			Proofs::<T>::mutate(&proof, |val| {
-				// *val = (&receiver, current_block);
-				val.0 = receiver.clone(); 
-				val.1 = current_block;
+				*val = (receiver.clone(), current_block);
 			});
 			Self::deposit_event(RawEvent::ClaimTransfered(sender, receiver, proof));
 		}
-
-		// #[weight = 10_000]
-		// fn transfer_claim(origin, dest, proof: Vec<u8>) {
-		// 	let sender = ensure_signed(origin)?;
-		// 	ensure!(Proofs::<T>::contains_key(&proof), Error::<T>::NoSuchProof);
-		// 	let (owner, _) = Proofs::<T>::get(&proof);
-		// 	ensure!(sender == owner, Error::<T>::NotProofOwner);
-		// 	let current_block = <frame_system::Module<T>>::block_number();
-		// 	let receiver = ensure_signed(dest)?;
-		// 	Proofs::<T>::mutate(&proof, (&receiver, current_block));
-		// 	Self::deposit_event(RawEvent::ClaimTransfered(sender, receiver, proof));
-		// }
 	}
 }
